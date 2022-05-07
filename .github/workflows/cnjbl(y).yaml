@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
        include:
-         - csv: cnjbly.csv
+         - csv: cnjbl.csv
            line: 0
-         - csv: cnjbly.csv
+         - csv: cnjbl.csv
            line: 1
          - csv: cnjbly.csv
            line: 0
