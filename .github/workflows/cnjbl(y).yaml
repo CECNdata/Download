@@ -55,4 +55,4 @@ jobs:
       - name: run customs download
         run: |
             cd customs
-            python run.py  --path mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}
+            python run.py  --path mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}  2>&1 
