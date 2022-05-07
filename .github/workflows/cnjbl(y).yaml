@@ -50,7 +50,7 @@ jobs:
 
       - name: Install Playwright
         run: |
-            python -m playwright install
+            python -m playwright install webkit
 
       - name: run customs download
         run: |
