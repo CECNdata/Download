@@ -29,7 +29,10 @@ jobs:
         run: |
             python clean_md5_action.py
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: auto clean_md5_action
-          push_options: --force
+      - name: Commit report
+        run: |
+          git add -A
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git commit -am "Automated clean md5"
+          git push -f
