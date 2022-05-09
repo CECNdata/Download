@@ -6,7 +6,7 @@ on:
         tags:
           description: 'action'  
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 */6 * * *'
 
 env:
   repo_name: CECNdata/GA-sec
