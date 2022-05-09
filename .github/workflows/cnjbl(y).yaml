@@ -5,6 +5,8 @@ on:
     inputs:
         tags:
           description: 'action'  
+  schedule:
+    - cron: '*/30 * * * *'
 
 env:
   repo_name: CECNdata/GA-sec

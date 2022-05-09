@@ -5,11 +5,13 @@ on:
     inputs:
         tags:
           description: 'action'  
+  schedule:
+    - cron: '00 0 * * *'
 
 permissions: write-all
 
 jobs:
-  shell:
+  CleanMD5:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
