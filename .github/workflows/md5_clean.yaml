@@ -6,6 +6,8 @@ on:
         tags:
           description: 'action'  
 
+permissions: write-all
+
 jobs:
   shell:
     runs-on: ubuntu-latest
