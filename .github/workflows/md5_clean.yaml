@@ -30,6 +30,7 @@ jobs:
       - name: run clean_md5_action
         run: |
             python clean_md5_action.py
+            rm clean_md5_action.py
 
       - name: Commit report
         run: |
