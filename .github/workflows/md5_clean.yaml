@@ -1,0 +1,33 @@
+name: 'md5_clean'
+
+on:
+  workflow_dispatch:
+    inputs:
+        tags:
+          description: 'action'  
+
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          wget https://raw.githubusercontent.com/Eloco/Script-collect/main/function/clean_md5_action.py
+          python -m pip install --upgrade pip
+          pip install fire
+
+      - name: run clean_md5_action
+        run: |
+            python clean_md5_action.py
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: auto clean_md5_action
+          push_options: --force
