@@ -1,0 +1,61 @@
+name: 'cnjbl(y)_release_day'
+
+on:
+  workflow_dispatch:
+    inputs:
+        tags:
+          description: 'action'  
+  schedule:
+    - cron: '*/15 * 20 * *'
+    - timezone: 'Asia/Shanghai'
+
+env:
+  repo_name: CECNdata/GA-sec
+  retry: 3
+
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+       include:
+         - csv: cnjbl.csv
+           line: 0
+         - csv: cnjbl.csv
+           line: 1
+         - csv: cnjbly.csv
+           line: 0
+         - csv: cnjbly.csv
+           line: 1
+
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v3
+        with:
+          repository: '${{ env.repo_name  }}'
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains you PAT
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          cd customs
+          python -m pip install --upgrade pip
+          pip install fire
+          pip install pipreqs
+          pipreqs .
+          pip install -r requirements.txt
+
+      - uses: microsoft/playwright-github-action@v1
+
+      - name: Install Playwright
+        run: |
+            python -m playwright install webkit
+
+      - name: run customs download
+        run: |
+            cd customs
+            python run_release_day.py  --path mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}  2>&1 
