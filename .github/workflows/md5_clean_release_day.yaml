@@ -1,0 +1,48 @@
+name: 'md5_clean_release_day'
+
+on:
+  workflow_dispatch:
+    inputs:
+        tags:
+          description: 'action'  
+  schedule:
+    - cron: '*/30 0-10 20 * *'
+
+permissions: write-all
+
+jobs:
+  CleanMD5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          wget https://raw.githubusercontent.com/Eloco/Script-collect/main/function/clean_md5_action.py
+          python -m pip install --upgrade pip
+          pip install fire
+
+      - name: run clean_md5_action
+        run: |
+            python clean_md5_action.py
+            rm clean_md5_action.py
+
+      - name: Commit report
+        continue-on-error: true
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --orphan latest_branch
+          git add -A
+          git commit -am "clean md5 and history commit"
+          git branch -D main
+          git branch -m main
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+          git push -f origin main
