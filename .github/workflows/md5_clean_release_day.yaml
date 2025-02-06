@@ -1,0 +1,50 @@
+name: 'md5_clean_release_day'
+
+on:
+  workflow_dispatch:
+    inputs:
+        tags:
+          description: 'action'  
+  schedule:
+    - cron: '*/30 0-10 20 * *'
+
+permissions: write-all
+
+jobs:
+  CleanMD5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          wget https://raw.githubusercontent.com/Eloco/Script-collect/main/function/clean_md5_action.py
+          python -m pip install --upgrade pip
+          pip install fire
+
+      - name: run clean_md5_action
+        run: |
+            python clean_md5_action.py
+            rm clean_md5_action.py
+
+      - name: Commit report
+        continue-on-error: true
+        run: |
+            rm -rf .git
+            git config --global init.defaultBranch main
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            git init
+            git add -A
+            git commit -m "Initial commit for new branch"
+            echo "ready pushing"
+            git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+            echo "now pushing"
+            git push -f origin main
