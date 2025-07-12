@@ -11,12 +11,16 @@ on:
         description: 'end_date'
         required: false
         default: "202201"
-
+      timeout:
+        description: 'timeout'
+        required: false
+        default: "1800"
 env:
   start_date: ${{ github.event.inputs.start_date }}
   end_date: ${{ github.event.inputs.end_date }}
   repo_name: CECNdata/GA-sec
   retry: 3
+  timeout: ${{ github.event.inputs.timeout}}
 
 
 jobs:
@@ -67,4 +71,4 @@ jobs:
         continue-on-error: true
         run: |
             cd customs
-            timeout 1800 python download_pyscript/run_optional.py  --path mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}
+            timeout $timeout python download_pyscript/run_optional.py  --path mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}
