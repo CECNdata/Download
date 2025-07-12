@@ -67,4 +67,4 @@ jobs:
         continue-on-error: true
         run: |
             cd customs
-            timeout 1800 python download_pyscript/run_optional.py  --path download_pyscript/mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}
+            timeout 1800 python download_pyscript/run_optional.py  --path mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}
