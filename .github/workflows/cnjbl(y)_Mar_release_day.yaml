@@ -1,0 +1,65 @@
+name: 'cnjbl(y)_Mar_release_day'
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */4 20-25 3 *'
+    
+env:
+  repo_name: CECNdata/GA-sec
+  retry: 6
+
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+       include:
+         - csv: cnjbl.csv
+           line: 0
+         - csv: cnjbl.csv
+           line: 1
+         - csv: cnjbly.csv
+           line: 0
+         - csv: cnjbly.csv
+           line: 1       
+           
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v3
+        with:
+          repository: '${{ env.repo_name  }}'
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains you PAT
+
+      - name: Set Environment Variables
+        run: |
+          echo "start_date=$(date +%Y)01" >> $GITHUB_ENV
+          echo "end_date=$(date +%Y)01" >> $GITHUB_ENV
+
+      - uses: actions/setup-node@v3
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          cd customs
+          python -m pip install --upgrade pip
+          pip install fire
+          pip install pipreqs
+          pipreqs .
+          pip install -r requirements.txt
+
+      - name: Install Playwright
+        run: |
+            python -m playwright install
+
+      - name: run customs download
+        continue-on-error: true
+        run: |
+            cd customs
+            timeout 1800 python download_pyscript/run_optional.py  --path mapping/${{matrix.csv}} --line "${{matrix.line}}" --retry ${{env.retry}}
